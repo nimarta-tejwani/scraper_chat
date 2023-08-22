@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scraper Bot</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Color scheme */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 20px auto;
+            border: 2px solid #e8ebee;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        .user-bubble, .bot-bubble {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+        .bot-bubble {
+            background-color: #f3f3f3;
+            color: #000;
+        }
+        h1 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin: 40px;
+        }
+        h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.1rem;
+            margin: 40px;
+        }
+        #btn{
+            margin-top:30px;   
+        }
+    </style>
+</head>
+<body>
+    <h1 class="text-center mb-4">Scraper Chat</h1>
+    <h3 class="text-center mb-4"> URL: {{url}}</h3>
+    <div class="chat-container">
+        <div id="chat-history">
+            <!-- Chat history will be displayed here -->
+        </div>
+        <form id="chat-form" class="mb-3">
+            <div class="form-row align-items-center">
+                <div class="col">
+                    <label for="user_input">You:</label>
+                    <input type="text" class="form-control" id="user_input" name="user_input">
+                </div>
+                <div class="col-auto">
+                    <button id="btn" type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Include Bootstrap JS (Optional, only needed if you use Bootstrap components that require JavaScript) -->
+    <!-- You can place this before the </body> closing tag -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load chat history from local storage
+            const chatHistory = localStorage.getItem('chatHistory');
+            if (chatHistory) {
+                document.getElementById('chat-history').innerHTML = chatHistory;
+            }
+
+            // Handle form submission
+            document.getElementById('chat-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const userInput = document.getElementById('user_input').value.trim();
+                if (userInput !== '') {
+                    // Create user's chat bubble and append it to the chat history
+                    const userBubble = document.createElement('div');
+                    userBubble.classList.add('user-bubble');
+                    userBubble.textContent = 'You: ' + userInput;
+                    document.getElementById('chat-history').appendChild(userBubble);
+
+                    // Simulate bot's response (you should implement the bot response logic here)
+                    const botResponse = await getBotResponseFromServer(userInput);
+                    const botBubble = document.createElement('div');
+                    botBubble.classList.add('bot-bubble');
+                    botBubble.textContent = botResponse;
+                    document.getElementById('chat-history').appendChild(botBubble);
+
+                    // Clear input field after sending
+                    document.getElementById('user_input').value = '';
+
+                    // Save chat history to local storage
+                    sessionStorage.setItem('chatHistory', document.getElementById('chat-history').innerHTML);
+
+                    // Scroll to the bottom of the chat container to show the latest messages
+                    document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
+                }
+            });
+        });
+
+        // Function to get bot response from the server
+        async function getBotResponseFromServer(userInput) {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_input: userInput })
+            });
+            const data = await response.json();
+            return data.bot_response;
+        }
+
+        // Modify the existing getBotResponse function to use the server response
+        async function getBotResponse(userInput) {
+            const botResponse = await getBotResponseFromServer(userInput);
+            return "Bot: "+ botResponse;
+        }
+
+    </script>
+</body>
+</html>
