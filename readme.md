@@ -34,3 +34,10 @@ The project has been developed using following tools and technologies
     - Run project
 
             uvicorn main:app
+
+
+## Output
+
+![](/images/1.png)
+
+![](/images/2.png)
