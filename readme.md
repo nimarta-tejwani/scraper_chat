@@ -33,7 +33,7 @@ The project has been developed using following tools and technologies
 
     - Run project
 
-            uvicorn main:app
+            python app.py
 
 
 ## Output
